@@ -3,7 +3,7 @@ from meal_max.models.meal import Meal, create_meal, get_meal_by_id, get_meal_by_
 
 @pytest.fixture
 def sample_meal1():
-    """Fixture providing a sample meal for testing."""
+    """Fixture providing sample meal for testing."""
     return Meal(
         id=1,
         meal="Manti",

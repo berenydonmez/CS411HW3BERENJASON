@@ -4,7 +4,7 @@ from meal_max.utils.random_utils import get_random
 
 @pytest.fixture
 def mock_requests_get(mocker):
-    """Fixture to mock the requests.get function."""
+    """Fixture to mock  requests.get function."""
     return mocker.patch('requests.get')
 
 @pytest.fixture
