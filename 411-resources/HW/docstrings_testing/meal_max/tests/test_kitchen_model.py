@@ -3,7 +3,7 @@ from meal_max.models.meal import Meal, create_meal, get_meal_by_id, get_meal_by_
 
 @pytest.fixture
 def sample_meal1():
-    """Fixture providing sample meal for testing."""
+    """Fixture to provide sample meal for testing."""
     return Meal(
         id=1,
         meal="Manti",
@@ -14,7 +14,7 @@ def sample_meal1():
 
 @pytest.fixture
 def sample_meal2():
-    """Fixture providing another sample meal for testing."""
+    """Fixture to provide another sample meal for testing."""
     return Meal(
         id=2,
         meal="Sushi Roll",
@@ -37,7 +37,7 @@ def mock_db_connection(mocker):
 ##################################################
 
 def test_create_meal_success(mock_db_connection):
-    """Test successful meal creation."""
+    """Test success of meal creation."""
     create_meal("Manti", "Turkish", 12.99, "MED")
     
     mock_cursor = mock_db_connection().cursor()
@@ -50,7 +50,7 @@ def test_create_meal_invalid_price():
         create_meal("Manti", "Turkish", -5, "MED")
 
 def test_create_meal_invalid_difficulty():
-    """Test error when creating meal with invalid difficulty level."""
+    """Test error when creating meal with invalid difficulty."""
     with pytest.raises(ValueError, match="Invalid difficulty level: EXTREME"):
         create_meal("Manti", "Turkish", 12.99, "EXTREME")
 
@@ -67,7 +67,7 @@ def test_create_duplicate_meal(mock_db_connection):
 ##################################################
 
 def test_get_meal_by_id_success(mock_db_connection, sample_meal1):
-    """Test successful meal retrieval by ID."""
+    """Test successful meal getting by the meals ID."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (1, "Manti", "Turkish", 12.99, "MED", False)
     
@@ -78,7 +78,7 @@ def test_get_meal_by_id_success(mock_db_connection, sample_meal1):
     assert meal.difficulty == "MED"
 
 def test_get_meal_by_id_not_found(mock_db_connection):
-    """Test error when getting non-existent meal by ID."""
+    """Test error when getting non-existent by the meals ID."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = None
     
@@ -86,7 +86,7 @@ def test_get_meal_by_id_not_found(mock_db_connection):
         get_meal_by_id(999)
 
 def test_get_meal_by_name_success(mock_db_connection, sample_meal1):
-    """Test successful meal retrieval by name."""
+    """Test successful meal getting by name."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (1, "Manti", "Turkish", 12.99, "MED", False)
     
@@ -99,7 +99,7 @@ def test_get_meal_by_name_success(mock_db_connection, sample_meal1):
 ##################################################
 
 def test_delete_meal_success(mock_db_connection):
-    """Test successful meal deletion."""
+    """Test successful meal delete."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (False,)
     
@@ -107,7 +107,7 @@ def test_delete_meal_success(mock_db_connection):
     assert "UPDATE meals SET deleted = TRUE" in mock_cursor.execute.call_args_list[-1][0][0]
 
 def test_delete_already_deleted_meal(mock_db_connection):
-    """Test error when deleting an already deleted meal."""
+    """Test error when deleting a deleted meal."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (True,)
     
@@ -119,7 +119,7 @@ def test_delete_already_deleted_meal(mock_db_connection):
 ##################################################
 
 def test_update_meal_stats_win(mock_db_connection):
-    """Test updating meal stats for a win."""
+    """Test updating meal statistics when win."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (False,)
     
@@ -127,7 +127,7 @@ def test_update_meal_stats_win(mock_db_connection):
     assert "UPDATE meals SET battles = battles + 1, wins = wins + 1" in mock_cursor.execute.call_args_list[-1][0][0]
 
 def test_update_meal_stats_loss(mock_db_connection):
-    """Test updating meal stats for a loss."""
+    """Test updating meal statistics when loss."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (False,)
     
@@ -135,7 +135,7 @@ def test_update_meal_stats_loss(mock_db_connection):
     assert "UPDATE meals SET battles = battles + 1" in mock_cursor.execute.call_args_list[-1][0][0]
 
 def test_update_meal_stats_invalid_result(mock_db_connection):
-    """Test error when updating stats with invalid result."""
+    """Test error when updating statistics when invalid result."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (False,)
     
@@ -147,7 +147,7 @@ def test_update_meal_stats_invalid_result(mock_db_connection):
 ##################################################
 
 def test_get_leaderboard_by_wins(mock_db_connection):
-    """Test retrieving leaderboard sorted by wins."""
+    """Test retrieve leaderboard sorted by wins."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchall.return_value = [
         (1, "Manti", "Turkish", 12.99, "MED", 10, 8, 0.8),
