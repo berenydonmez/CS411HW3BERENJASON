@@ -1,16 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Handles meal management for MealMax, including CRUD operations and battle statistics.
-
-Provides database management for meals, letting creation, retrieval, and updating of meal
-data, also to track meal battle statistics.
-
-Example:
-    # Add and retrieve meal
-    meal = create_meal("Manti", "Turkish", 12, "HIGH")
-    meal_info = get_meal_by_name("Manti")
-
-Attributes:
-    logger: Logger instance configured for the meal module.
+"""Handles meal management for MealMax, including CRUD operations and battle 
+statistics and provides database management for meals, letting creation, retrieval, 
+and updating of meal data, also to track meal battle statistics.
 """
 
 from dataclasses import dataclass
@@ -29,13 +20,9 @@ configure_logger(logger)
 @dataclass
 class Meal:
     """A class to represent a meal with its properties.
-    
-    This class uses the dataclass decorator to automatically generate 
-    special methods like __init__ and __repr__. It includes validation
-    for price and difficulty values.
 
     Attributes:
-        id (int): identifier for the meal.
+        id (int): The identifier for the meal.
         meal (str): Name of the meal.
         cuisine (str): Type of cuisine (e.g., "Turkish", "Japanese").
         price (float): Price of the meal 
@@ -51,11 +38,10 @@ class Meal:
     difficulty: str
 
     def __post_init__(self):
-        """Validates meal attributes after initialization.
+        """Validates meal attributes.
 
         Raises:
-            ValueError: If price is negative or difficulty is not one of 
-                'LOW', 'MED', or 'HIGH'.
+            ValueError: If price is not positive or difficulty is not 'LOW', 'MED', or 'HIGH'.
         """
         if self.price < 0:
             raise ValueError("Price must be a positive value.")
@@ -67,10 +53,10 @@ def create_meal(meal: str, cuisine: str, price: float, difficulty: str) -> None:
     """Creates a new meal in the database.
 
     Args:
-        meal (str): Name of the meal, must be unique.
-        cuisine (str): Type of cuisine.
-        price (float): Positive price value.
-        difficulty (str): One of 'LOW', 'MED', 'HIGH' indicating preparation difficulty.
+        meal (str): The meal's name.
+        cuisine (str): The cuisine the meal belongs to.
+        price (float): The price (positive) of the meal.
+        difficulty (str): Preparing difficulty of meal.
         
     Returns:
         int: The ID of the newly created meal.
@@ -78,7 +64,7 @@ def create_meal(meal: str, cuisine: str, price: float, difficulty: str) -> None:
     Raises:
         ValueError: If price is not positive, difficulty is invalid, or meal
             name already exists.
-        sqlite3.Error: If there's an error with the database operation.
+        sqlite3.Error: For any different error with the database. 
 
     Example:
         >>> create_meal("Spaghetti", "Turkish", 12.99, "LOW")
@@ -109,14 +95,14 @@ def create_meal(meal: str, cuisine: str, price: float, difficulty: str) -> None:
 
 
 def delete_meal(meal_id: int) -> None:
-    """Marks a meal as deleted in the database.
+    """Deletes and marks the meal as deleted.
 
     Args:
         meal_id: The ID of the meal to delete.
 
     Raises:
         ValueError: If the meal is not found or has already been deleted.
-        sqlite3.Error: If there's an error with the database operation.
+        sqlite3.Error: For any different error with the database. 
     """
     try:
         with get_db_connection() as conn:
@@ -141,26 +127,21 @@ def delete_meal(meal_id: int) -> None:
         raise e
 
 def get_leaderboard(sort_by: str="wins") -> dict[str, Any]:
-    """Retrieves the leaderboard of meals sorted by specified criteria.
-
-    Gets non-deleted meals with battle stats, sorted by either total wins or win percentage, depending on input.
+    """Gets the leaderboard of meals in the form of dictionary.
 
     Args:
         sort_by (str): Sorting criteria, either "wins" or "win_pct".
 
     Returns:
-        dict[str, Any]: Leaderboard entries, each with id, meal, cuisine, price,
-                    difficulty, battles, wins, and win_pct attributes.
+        dict[str, Any]: The dictionary having leaderboard entries for the meals.
      
-
     Raises:
-        ValueError: If sort_by parameter is invalid.
-        sqlite3.Error: If there's an error with the database operation.
+        ValueError: If sorting criteria parameter is invalid.
+        sqlite3.Error: For any different error with the database. 
 
     Example:
         >>> leaderboard = get_leaderboard(sort_by="win_pct")
         >>> print(leaderboard[0]['win_pct'])
-        85.7
     """
     query = """
         SELECT id, meal, cuisine, price, difficulty, battles, wins, (wins * 1.0 / battles) AS win_pct
@@ -206,14 +187,14 @@ def get_meal_by_id(meal_id: int) -> Meal:
     """Retrieves a meal from the database by its ID.
 
     Args:
-        meal_id: The ID of the meal to retrieve.
+        meal_id(int): The ID of the meal to retrieve.
 
     Returns:
-        A Meal object containing the meal's information.
+        A Meal object with the meal's information.
 
     Raises:
-        ValueError: If the meal is not found or has been deleted.
-        sqlite3.Error: If there's an error with the database operation.
+        ValueError: If the ID of meal is not found or has been deleted.
+        sqlite3.Error: For any different error with the database. 
 
     Example:
         >>> meal = get_meal_by_id(1)
@@ -247,11 +228,11 @@ def get_meal_by_name(meal_name: str) -> Meal:
         meal_name: The name of the meal to retrieve.
 
     Returns:
-        A Meal object containing the meal's information.
+        A Meal object with the meal's information.
 
     Raises:
-        ValueError: If the meal is not found or has been deleted.
-        sqlite3.Error: If there's an error with the database operation.
+        ValueError: If the name of meal is not found or has been deleted.
+        sqlite3.Error: For any different error with the database. 
 
     Example:
         >>> meal = get_meal_by_name("Manti with yogurt")
@@ -279,23 +260,18 @@ def get_meal_by_name(meal_name: str) -> Meal:
 
 
 def update_meal_stats(meal_id: int, result: str) -> None:
-    """Updates the battle statistics for a meal.
-
-    Increments the battle count and, if applicable, the win count for a meal
-    after a battle.
+    """Updates the statistics of  meal.
 
     Args:
-        meal_id (int): The unique identifier of the meal in the database.
-        result (str): The battle outcome. Must be exactly 'win' or 'loss' 
+        meal_id (int): The ID of the meal that will be updated.
+        result (str): The battle outcome either 'win' or 'loss'.
 
     Raises:
-        ValueError: If the meal is not found, has been deleted, or the result
-            is invalid.
-        sqlite3.Error: If there's an error with the database operation.
+        ValueError:  If the result is not found or has been deleted.
+        sqlite3.Error: For any different error with the database. 
 
     Example:
-        >>> update_meal_stats(1, 'win')  # Increments both battles and wins
-        >>> update_meal_stats(1, 'loss')  # Increments only battles
+        >>> update_meal_stats(1, 'win')  
     """
     try:
         with get_db_connection() as conn:
