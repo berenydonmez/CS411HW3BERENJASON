@@ -22,7 +22,7 @@ done
 #
 ###############################################
 
-# Function to check the health of the service
+# Function to check the health of  service
 check_health() {
   echo "Checking health status..."
   curl -s -X GET "$BASE_URL/health" | grep -q '"status": "healthy"'
