@@ -60,7 +60,7 @@ def test_prep_combatant_full_list(battle_model, sample_meal1, sample_meal2):
         battle_model.prep_combatant(extra_meal)
 
 def test_clear_combatants(battle_model, sample_meal1):
-    """Test clearing the combatants list."""
+    """Test clearing  combatants list."""
     battle_model.prep_combatant(sample_meal1)
     battle_model.clear_combatants()
     assert len(battle_model.get_combatants()) == 0
