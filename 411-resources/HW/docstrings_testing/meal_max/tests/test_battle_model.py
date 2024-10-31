@@ -101,7 +101,7 @@ def test_get_battle_score_different_difficulties(battle_model):
 ##################################################
 
 def test_battle_not_enough_combatants(battle_model, sample_meal1):
-    """Test error for starting battle with non sufficiants combatants."""
+    """Test battle raises error for insufficient combatants."""
     battle_model.prep_combatant(sample_meal1)
     with pytest.raises(ValueError, match="Two combatants must be prepped"):
         battle_model.battle()
