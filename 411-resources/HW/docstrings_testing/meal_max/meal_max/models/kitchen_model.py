@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Handles meal management for MealMax, including CRUD operations and battle statistics.
 
-Provides database management for meals, enabling creation, retrieval, and update of meal
-data, along with tracking meal battle statistics.
+Provides database management for meals, letting creation, retrieval, and updating of meal
+data, also to track meal battle statistics.
 
 Example:
     # Add and retrieve meal
