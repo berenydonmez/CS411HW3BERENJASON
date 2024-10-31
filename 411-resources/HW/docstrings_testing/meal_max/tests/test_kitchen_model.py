@@ -45,17 +45,17 @@ def test_create_meal_success(mock_db_connection):
     assert "INSERT INTO meals" in mock_cursor.execute.call_args[0][0]
 
 def test_create_meal_invalid_price():
-    """Test error when creating meal with invalid price."""
+    """Test create_meal raises error for invalid price."""
     with pytest.raises(ValueError, match="Invalid price: -5. Price must be a positive number"):
         create_meal("Manti", "Turkish", -5, "MED")
 
 def test_create_meal_invalid_difficulty():
-    """Test error when creating meal with invalid difficulty."""
+    """Test create_meal raises error for invalid difficulty."""
     with pytest.raises(ValueError, match="Invalid difficulty level: EXTREME"):
         create_meal("Manti", "Turkish", 12.99, "EXTREME")
 
 def test_create_duplicate_meal(mock_db_connection):
-    """Test error when creating a duplicate meal."""
+    """Test create_meal raises error for duplicate meal name."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.execute.side_effect = sqlite3.IntegrityError
     
@@ -78,7 +78,7 @@ def test_get_meal_by_id_success(mock_db_connection, sample_meal1):
     assert meal.difficulty == "MED"
 
 def test_get_meal_by_id_not_found(mock_db_connection):
-    """Test error when getting non-existent by the meals ID."""
+    """Test get_meal_by_id raises error for non-existent ID."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = None
     
@@ -107,7 +107,7 @@ def test_delete_meal_success(mock_db_connection):
     assert "UPDATE meals SET deleted = TRUE" in mock_cursor.execute.call_args_list[-1][0][0]
 
 def test_delete_already_deleted_meal(mock_db_connection):
-    """Test error when deleting a deleted meal."""
+    """Test delete_meal raises error for already deleted meal."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (True,)
     
@@ -135,7 +135,7 @@ def test_update_meal_stats_loss(mock_db_connection):
     assert "UPDATE meals SET battles = battles + 1" in mock_cursor.execute.call_args_list[-1][0][0]
 
 def test_update_meal_stats_invalid_result(mock_db_connection):
-    """Test error when updating statistics when invalid result."""
+    """Test update_meal_stats raises error for invalid result."""
     mock_cursor = mock_db_connection().cursor()
     mock_cursor.fetchone.return_value = (False,)
     
@@ -160,6 +160,6 @@ def test_get_leaderboard_by_wins(mock_db_connection):
     assert leaderboard[0]['win_pct'] == 80.0
 
 def test_get_leaderboard_invalid_sort(mock_db_connection):
-    """Test error when getting leaderboard with invalid sort parameter."""
+    """Test get_leaderboard raises error for invalid sort parameter."""
     with pytest.raises(ValueError, match="Invalid sort_by parameter: invalid"):
         get_leaderboard("invalid")
