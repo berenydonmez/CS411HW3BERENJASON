@@ -5,12 +5,12 @@ from meal_max.models.kitchen_model import Meal
 
 @pytest.fixture
 def battle_model():
-    """Fixture providing a fresh BattleModel instance for each test."""
+    """Fixture to provide new instance of BattleModel for each test."""
     return BattleModel()
 
 @pytest.fixture
 def sample_meal1():
-    """Fixture providing a sample meal for testing."""
+    """Fixture to provide a sample meal for testing."""
     return Meal(
         id=1,
         meal="Manti",
@@ -21,7 +21,7 @@ def sample_meal1():
 
 @pytest.fixture
 def sample_meal2():
-    """Fixture providing another sample meal for testing."""
+    """Fixture to provide another sample meal for testing."""
     return Meal(
         id=2,
         meal="Sushi Roll",
@@ -101,7 +101,7 @@ def test_get_battle_score_different_difficulties(battle_model):
 ##################################################
 
 def test_battle_not_enough_combatants(battle_model, sample_meal1):
-    """Test error when starting battle with insufficient combatants."""
+    """Test error for starting battle with non sufficiants combatants."""
     battle_model.prep_combatant(sample_meal1)
     with pytest.raises(ValueError, match="Two combatants must be prepped"):
         battle_model.battle()
@@ -120,7 +120,7 @@ def test_battle_execution(battle_model, sample_meal1, sample_meal2, mock_random,
     assert len(battle_model.combatants) == 1
 
 def test_battle_random_influence(battle_model, sample_meal1, sample_meal2, mock_random, mock_update_stats):
-    """Test how random number influences battle outcome."""
+    """Test the way random number influences the battle outcome."""
     mock_random.return_value = 0.1
     battle_model.prep_combatant(sample_meal1)
     battle_model.prep_combatant(sample_meal2)
@@ -156,7 +156,7 @@ def test_battle_with_identical_meals(battle_model, sample_meal1, mock_random, mo
     assert mock_update_stats.call_count == 2
 
 def test_prep_same_meal_twice(battle_model, sample_meal1):
-    """Test adding the same meal twice."""
+    """Test to add the same meal twice."""
     battle_model.prep_combatant(sample_meal1)
     battle_model.prep_combatant(sample_meal1)
     assert len(battle_model.combatants) == 2
